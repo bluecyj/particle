@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原子對對碰-精簡版</title>
+    <!-- 引入 Three.js 進行高效穩定的 3D 分子渲染，徹底解決 OffscreenCanvas 錯誤 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,400;0,600;0,700;1,500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Mali', 'Noto Sans TC', sans-serif;
+            background-color: #f7f3e9;
+            background-image: radial-gradient(#e0d7c3 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            color: #4a3e3d;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Hand-drawn sketchy border effect */
+        .sketch-border {
+            border: 3px solid #4a3e3d;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            box-shadow: 4px 5px 0px #4a3e3d;
+            transition: all 0.2s ease;
+        }
+
+        .sketch-border-sm {
+            border: 2px solid #4a3e3d;
+            border-radius: 200px 12px 180px 10px/10px 180px 12px 200px;
+            box-shadow: 2px 3px 0px #4a3e3d;
+        }
+
+        .sketch-btn {
+            border: 2px solid #4a3e3d;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            box-shadow: 3px 4px 0px #4a3e3d;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .sketch-btn:active {
+            transform: translate(2px, 3px);
+            box-shadow: 1px 1px 0px #4a3e3d;
+        }
+
+        /* Card element colors grouped by periodic table family (同族同色) */
+        .card-H, .card-Na { background-color: #fff6df; border-color: #d69e2e; }
+        .card-C { background-color: #eeeef0; border-color: #555866; }
+        .card-N { background-color: #efe8f8; border-color: #6b52a1; }
+        .card-O, .card-S { background-color: #fee2e2; border-color: #dc2626; }
+        .card-Cl { background-color: #e8f8e8; border-color: #388e3c; }
+        .card-He { background-color: #f0f9ff; border-color: #0284c7; }
+        .card-compound { background-color: #fffbf0; border-color: #d97706; }
+
+        .dragging {
+            opacity: 0.9;
+            transform: scale(1.05) rotate(2deg) !important;
+            z-index: 1000 !important;
+            box-shadow: 8px 12px 20px rgba(74, 62, 61, 0.25) !important;
+        }
+
+        .can-combine {
+            animation: pulse-glow 1.2s infinite alternate;
+        }
+
+        .can-combine::after {
+            content: "✨ 點擊合成";
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f59e0b;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 1px 6px;
+            border-radius: 10px;
+            border: 1.5px solid #4a3e3d;
+            box-shadow: 2px 2px 0px #4a3e3d;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 30;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 0 4px #f59e0b, 5px 6px 0px #4a3e3d;
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 0 0 10px rgba(245, 158, 11, 0.4), 6px 8px 0px #4a3e3d;
+                transform: scale(1.06);
+            }
+        }
+
+        .tray-recycle-active {
+            background-color: #fca5a5 !important;
+            border-color: #dc2626 !important;
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1e9da;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5b8a5;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between select-none overflow-hidden relative">
+
+    <!-- Top Header Navigation -->
+    <header class="w-full bg-[#f2ebd9] border-b-4 border-[#4a3e3d] px-3 py-2 md:px-4 md:py-3 flex justify-between items-center z-20 shadow-sm relative">
+        <div class="flex items-center space-x-2 md:space-x-3">
+            <div class="w-9 h-9 md:w-10 md:h-10 bg-[#e07a5f] text-white rounded-full flex items-center justify-center sketch-btn text-lg md:text-xl font-bold">
+                🧪
+            </div>
+            <div>
+                <h1 class="text-lg md:text-2xl font-bold tracking-wide text-[#4a3e3d]">原子對對碰-精簡版</h1>
+                <p class="text-[11px] md:text-xs text-[#7d6b69] font-medium hidden sm:block">重疊原子卡牌出現黃光點擊合成！點擊 ℹ️ 可看詳細說明與 3D 模型，雙擊或拉到底欄回收卡牌。</p>
+            </div>
+        </div>
+
+        <!-- Utility Buttons -->
+        <div class="flex items-center space-x-1.5 md:space-x-3">
+            <button id="btn-codex" class="sketch-btn bg-[#81b29a] hover:bg-[#6fa088] text-white px-2.5 py-1 md:px-3 md:py-1.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1.5">
+                <i class="fa-solid font-bold fa-book-bookmark"></i>
+                <span>圖鑑 (<span id="codex-count">0</span>/19)</span>
+            </button>
+            <button id="btn-sound" class="sketch-btn bg-[#f2cc8f] hover:bg-[#e0b87b] text-[#4a3e3d] p-1.5 md:p-2 rounded-xl text-base md:text-lg font-bold" title="切換音效">
+                <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+            </button>
+            <button id="btn-clear" class="sketch-btn bg-[#e07a5f] hover:bg-[#cd684e] text-white px-2.5 py-1 md:px-3 md:py-1.5 rounded-xl font-bold text-xs md:text-sm flex items-center gap-1">
+                <i class="fa-solid fa-trash-can"></i>
+                <span class="hidden sm:inline">清空桌面</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Interactive Workspace Area -->
+    <main id="workspace" class="relative flex-1 w-full h-full overflow-hidden bg-transparent">
+        <!-- Background guide text when empty -->
+        <div id="empty-hint" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-40 select-none p-4 text-center">
+            <div class="w-20 h-20 md:w-24 md:h-24 mb-3 rounded-full border-4 border-dashed border-[#8d7b78] flex items-center justify-center text-3xl md:text-4xl">
+                ✨
+            </div>
+            <p class="text-lg md:text-2xl font-bold text-[#6b5a58]">點擊下方原子卡牌，把卡牌放進這裡！</p>
+            <p class="text-xs md:text-base mt-2 text-[#7d6b69]">試試合成可能的「分子」：<span class="font-bold underline">1張N + 1張O → 1個NO分子 (一氧化氮)</span> 或 <span class="font-bold underline">2張H + 1張O → 1個 H₂O分子 (水)</span>！</p>
+            <p class="text-xs md:text-sm mt-3 text-[#e07a5f] font-bold bg-[#fffdfa]/90 px-4 py-2 rounded-2xl border-2 border-[#4a3e3d] shadow-sm pointer-events-auto">
+                💡 提示：點擊卡牌右上角的 ℹ️ 圖案，可以出現這個「分子」(原子)的詳細說明與 3D 分子模型哦！
+            </p>
+        </div>
+
+        <!-- Dynamic Cards Container -->
+        <div id="cards-container" class="absolute inset-0 w-full h-full"></div>
+    </main>
+
+    <!-- Bottom Tray: Element Selector & Drag-to-Delete Dropzone -->
+    <footer id="bottom-tray" class="w-full bg-[#ebdcc2] border-t-4 border-[#4a3e3d] p-1.5 md:p-2 z-20 shadow-lg transition-colors duration-200">
+        <div class="max-w-6xl mx-auto flex flex-col items-center">
+            <div id="tray-hint" class="text-[11px] md:text-xs font-bold text-[#6e5d5a] mb-1 flex items-center gap-1 transition-colors">
+                <i class="fa-solid fa-hand-pointer text-[#e07a5f]" id="tray-icon"></i>
+                <span id="tray-text">選擇原子卡牌（點擊放進實驗區，拉回此區可回收）：</span>
+            </div>
+            
+            <div id="element-tray" class="flex flex-wrap justify-center items-center gap-1 md:gap-1.5 w-full max-h-32 md:max-h-none overflow-y-auto py-0.5">
+                <!-- Elements dynamically generated -->
+            </div>
+
+            <!-- Non-floating embedded signature -->
+            <div style="text-align: right; width: 100%; margin-top: 4px; padding-right: 6px; font-size: 0.75rem; color: #786c6b;">
+                by Jay`s Lab 紅樓老頭子 系統版本：v2.0
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal: Card Details -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div id="detail-modal-content" class="sketch-border bg-[#faf6ed] max-w-lg w-full p-6 relative flex flex-col md:flex-row gap-6 transition-all duration-300">
+            <button id="modal-close" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#e07a5f] text-white font-bold flex items-center justify-center sketch-btn z-20">
+                ✕
+            </button>
+            
+            <!-- Left Side: 3D Viewer -->
+            <div id="modal-3d-container" class="hidden w-full md:w-1/2 flex-col border-2 border-dashed border-[#b8a994] rounded-xl bg-[#f8f5ee] relative min-h-[250px] md:min-h-[350px] overflow-hidden">
+                <div class="absolute top-2 left-3 text-xs font-bold text-[#8c736c] z-10 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md border border-[#e2d8be]">
+                    <i class="fa-solid fa-cube text-[#e07a5f]"></i> 3D 模型 (可拖曳旋轉/滾輪縮放)
+                </div>
+                <div id="molecule-viewer" class="w-full h-full absolute inset-0 cursor-move"></div>
+            </div>
+
+            <!-- Right Side: Details -->
+            <div id="modal-info-container" class="w-full flex flex-col">
+                <div class="flex items-center gap-4 mb-4">
+                    <div id="modal-badge" class="w-20 h-24 rounded-2xl sketch-border flex flex-col items-center justify-center font-bold text-3xl shrink-0">
+                        <!-- Symbol -->
+                    </div>
+                    <div>
+                        <span id="modal-type" class="text-xs font-bold px-2 py-1 rounded-md bg-[#e2d8be] text-[#5c4d4a]">元素</span>
+                        <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold text-[#4a3e3d] mt-1">名稱</h2>
+                        <p id="modal-sub" class="text-sm font-semibold text-[#8c736c]">英文名 / 分子式</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 text-left flex-1">
+                    <div class="bg-[#f0e6d2] p-3 rounded-xl border-2 border-[#b8a994]">
+                        <h3 class="font-bold text-sm text-[#524442] flex items-center gap-1.5 mb-1">
+                            <i class="fa-solid fa-atom text-[#e07a5f]"></i> 物理與化學性質
+                        </h3>
+                        <p id="modal-props" class="text-sm text-[#3b302f] leading-relaxed">性質詳細介紹...</p>
+                    </div>
+
+                    <div class="bg-[#e4eedd] p-3 rounded-xl border-2 border-[#9ebb93]">
+                        <h3 class="font-bold text-sm text-[#2f4d2a] flex items-center gap-1.5 mb-1">
+                            <i class="fa-solid fa-lightbulb text-[#388e3c]"></i> 生活常見用途
+                        </h3>
+                        <p id="modal-uses" class="text-sm text-[#243d20] leading-relaxed">用途詳細介紹...</p>
+                    </div>
+                </div>
+
+                <div class="mt-5 flex justify-end">
+                    <button id="modal-action-btn" class="sketch-btn bg-[#81b29a] text-white px-5 py-2 rounded-xl font-bold">
+                        關閉
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Codex / Collection Notebook -->
+    <div id="codex-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="sketch-border bg-[#fbf6ea] max-w-2xl w-full max-h-[85vh] flex flex-col p-6 relative">
+            <button id="codex-close" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#e07a5f] text-white font-bold flex items-center justify-center sketch-btn">
+                ✕
+            </button>
+
+            <div class="flex items-center gap-3 border-b-2 border-dashed border-[#bfae99] pb-3 mb-4">
+                <span class="text-3xl">📖</span>
+                <div>
+                    <h2 class="text-2xl font-bold text-[#4a3e3d]">「分子」解鎖手帳</h2>
+                    <p class="text-xs text-[#7d6b69]">收集所有 19 種配方（含雙氧水、單原子氣體、雙原子氣體、氧化物、氯化物等），成為化學鍊金大師！</p>
+                </div>
+            </div>
+
+            <div id="codex-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto p-1 flex-1">
+                <!-- Dynamically populated compound collection slots -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 sketch-btn bg-[#f2cc8f] text-[#4a3e3d] font-bold px-6 py-3 rounded-2xl shadow-xl z-50 transition-all duration-300 opacity-0 pointer-events-none translate-y-[-10px] flex items-center gap-2">
+        <span id="toast-icon">🎉</span>
+        <span id="toast-msg">合成成功！</span>
+    </div>
+
+    <script>
+        // 精簡版 Chemistry Database Definition (8 Elements: H, He, C, N, O, Na, S, Cl)
+        const ELEMENTS = {
+            'H': {
+                symbol: 'H',
+                name: '氫',
+                english: 'Hydrogen (H₂)',
+                number: 1,
+                group: '第 1 族 (IA 氫/鹼金屬族)',
+                colorClass: 'card-H',
+                badgeBg: 'bg-[#fff6df] text-[#b45309]',
+                props: '質地極輕，是宇宙中最豐富且密度最小的無色無味氣體。極易燃燒，燃燒產物僅為純水。',
+                uses: '乾淨的新能源、火箭推進劑、化肥合成原料與氫燃料電池汽車。'
+            },
+            'He': {
+                symbol: 'He',
+                name: '氦',
+                english: 'Helium',
+                number: 2,
+                group: '第 18 族 (VIIIA 稀有惰性氣體族)',
+                colorClass: 'card-He',
+                badgeBg: 'bg-[#f0f9ff] text-[#0284c7]',
+                props: '極輕的無色無味惰性氣體（十八族），沸點接近絕對零度。最穩定的原子之一，常溫下無法形成穩定化合物。',
+                uses: '空飄氣球與飛艇充氣（安全不燃）、超導磁體（MRI）深低溫冷卻劑、深海潛水混合氣體。',
+                xyz: `1\nHe\nHe 0.0000 0.0000 0.0000`
+            },
+            'C': {
+                symbol: 'C',
+                name: '碳',
+                english: 'Carbon',
+                number: 6,
+                group: '第 14 族 (IVA 碳族)',
+                colorClass: 'card-C',
+                badgeBg: 'bg-[#eeeef0] text-[#555866]',
+                props: '有機化學的基石，可形成石墨、鑽石等多種同素異形體。高溫下具強還原性。',
+                uses: '鉛筆芯（石墨）、飾品與切割器具（鑽石）、淨水濾心（活性碳）及有機分子結構基底。'
+            },
+            'N': {
+                symbol: 'N',
+                name: '氮',
+                english: 'Nitrogen (N₂)',
+                number: 7,
+                group: '第 15 族 (VA 氮族)',
+                colorClass: 'card-N',
+                badgeBg: 'bg-[#efe8f8] text-[#6b52a1]',
+                props: '無色無味惰性氣體，佔地球大氣體積約 78%。氮氮三鍵極其穩定，常溫下不易反應。',
+                uses: '食品包裝充氮保鮮、液氮冷凍醫療保存、化肥製造與電子廠防氧化惰性氣體保護。'
+            },
+            'O': {
+                symbol: 'O',
+                name: '氧',
+                english: 'Oxygen (O₂)',
+                number: 8,
+                group: '第 16 族 (VIA 氧族/硫族)',
+                colorClass: 'card-O',
+                badgeBg: 'bg-[#fee2e2] text-[#dc2626]',
+                props: '無色無味氣體，化學性質十分活潑，具強氧化性與助燃性，為大多數生物呼吸所必需。',
+                uses: '醫療救治給氧、潛水航天供氧、工業高溫鋼鐵冶煉與火箭助燃劑。'
+            },
+            'Na': {
+                symbol: 'Na',
+                name: '鈉',
+                english: 'Sodium',
+                number: 11,
+                group: '第 1 族 (IA 鹼金屬族)',
+                colorClass: 'card-Na',
+                badgeBg: 'bg-[#fff6df] text-[#b45309]',
+                props: '極軟且具銀白色金屬光澤，活性極高。遇水會劇烈反應生成氫氣並釋放大量熱。',
+                uses: '食鹽成分、高壓鈉燈發光劑、有機合成強還原劑及神經傳導必要的生理電解質。'
+            },
+            'S': {
+                symbol: 'S',
+                name: '硫',
+                english: 'Sulfur',
+                number: 16,
+                group: '第 16 族 (VIA 氧族/硫族)',
+                colorClass: 'card-S',
+                badgeBg: 'bg-[#fee2e2] text-[#dc2626]',
+                props: '黃色脆性非金屬固體，不溶於水。燃燒時發出藍色火焰並產生刺激性臭味的二氧化硫氣體。',
+                uses: '製造硫酸（工業之母）、黑色火藥、橡膠硫化劑、皮膚科硫磺軟膏與農藥殺菌劑。'
+            },
+            'Cl': {
+                symbol: 'Cl',
+                name: '氯',
+                english: 'Chlorine',
+                number: 17,
+                group: '第 17 族 (VIIA 鹵素族)',
+                colorClass: 'card-Cl',
+                badgeBg: 'bg-[#e8f8e8] text-[#388e3c]',
+                props: '黃綠色刺激性強烈毒性氣體，具強氧化性，易溶於水並形成具漂白性的次氯酸。',
+                uses: '自來水消毒殺菌、漂白水生產、塑膠 PVC 原料與食用鹽合成。'
+            }
+        };
+
+        // 內建標準 3D 立體數據，完全離線且絕無外連錯誤 Bug
+        const COMPOUNDS = [
+            {
+                id: 'CH4',
+                formula: 'CH₄',
+                name: '甲烷',
+                recipe: { 'C': 1, 'H': 4 },
+                props: '最簡單的有機物，無色無味極易燃氣體，具有經典的正四面體幾何結構。',
+                uses: '天然氣與沼氣的主要成分、家庭廚房瓦斯與發電燃料。',
+                badgeBg: 'bg-[#fef9c3] text-[#854d0e]',
+                xyz: `5\nCH4\nC 0.0000 0.0000 0.0000\nH 0.6293 0.6293 0.6293\nH -0.6293 -0.6293 0.6293\nH -0.6293 0.6293 -0.6293\nH 0.6293 -0.6293 -0.6293`
+            },
+            {
+                id: 'NH3',
+                formula: 'NH₃',
+                name: '氨氣',
+                recipe: { 'N': 1, 'H': 3 },
+                props: '具強烈刺激性氣味的無色氣體，分子呈三角錐形結構，極易溶於水且呈弱鹼性。',
+                uses: '農業化學肥料、冷氣製冷劑、家用清潔劑原料。',
+                badgeBg: 'bg-[#f3e8ff] text-[#6b21a8]',
+                xyz: `4\nNH3\nN 0.0000 0.0000 0.1165\nH 0.0000 0.9377 -0.2718\nH 0.8121 -0.4689 -0.2718\nH -0.8121 -0.4689 -0.2718`
+            },
+            {
+                id: 'H2O2',
+                formula: 'H₂O₂',
+                name: '過氧化氫 (雙氧水)',
+                recipe: { 'H': 2, 'O': 2 },
+                props: '無色微黏稠液體，強氧化劑。分子呈現非平面的特殊折角開書形幾何結構，易分解生成水與氧氣。',
+                uses: '醫用傷口消毒殺菌（雙氧水）、衣物與紙漿漂白、半導體晶圓清潔與火箭推進氧化劑。',
+                badgeBg: 'bg-[#e0f2fe] text-[#0369a1]',
+                xyz: `4\nH2O2\nO -0.7350 0.0000 -0.1000\nO 0.7350 0.0000 -0.1000\nH -1.1500 0.7800 0.4000\nH 1.1500 -0.7800 0.4000`
+            },
+            {
+                id: 'NO2',
+                formula: 'NO₂',
+                name: '二氧化氮',
+                recipe: { 'N': 1, 'O': 2 },
+                props: '紅棕色具刺激性氣味的劇毒氣體，呈彎曲形分子。溶於水生成硝酸與一氧化氮，為酸雨成分之一。',
+                uses: '製造硝酸的關鍵原料、火箭燃料的氧化劑。',
+                badgeBg: 'bg-[#ffedd5] text-[#9a3412]',
+                xyz: `3\nNO2\nN 0.0000 0.0000 0.3250\nO 0.0000 1.0600 -0.2600\nO 0.0000 -1.0600 -0.2600`
+            },
+            {
+                id: 'Na2O',
+                formula: 'Na₂O',
+                name: '氧化鈉',
+                recipe: { 'Na': 2, 'O': 1 },
+                props: '白色鹼性金屬氧化物，遇水立即劇烈反應並大量放熱生成強鹼氫氧化鈉（燒鹼）。',
+                uses: '製造平板玻璃助熔劑、化學合成鹼金屬試劑與陶瓷釉料。',
+                badgeBg: 'bg-[#fed7aa] text-[#9a3412]',
+                xyz: `3\nNa2O\nO 0.0000 0.0000 0.0000\nNa 0.0000 0.0000 1.9000\nNa 0.0000 0.0000 -1.9000`
+            },
+            {
+                id: 'O3',
+                formula: 'O₃',
+                name: '臭氧',
+                recipe: { 'O': 3 },
+                props: '淡藍色具刺激性氣味的氣體，呈 V 形彎曲分子，具強氧化性。平流層的臭氧層可吸收有害紫外線。',
+                uses: '空氣與水質殺菌消毒、漂白劑、大氣屏障保護地球生物。',
+                badgeBg: 'bg-[#f87171] text-white',
+                xyz: `3\nO3\nO 0.0000 0.0000 0.3800\nO 0.0000 1.0900 -0.1900\nO 0.0000 -1.0900 -0.1900`
+            },
+            {
+                id: 'H2O',
+                formula: 'H₂O',
+                name: '水',
+                recipe: { 'H': 2, 'O': 1 },
+                props: '生命之源，極性 V 形彎曲分子，鍵角約為 104.5 度。',
+                uses: '生物飲用維持生命、日常清潔、工業冷卻與化學反應介質。',
+                badgeBg: 'bg-[#dbeafe] text-[#1d4ed8]',
+                xyz: `3\nH2O\nO 0.0000 0.0000 0.1173\nH 0.0000 0.7572 -0.4692\nH 0.0000 -0.7572 -0.4692`
+            },
+            {
+                id: 'CO2',
+                formula: 'CO₂',
+                name: '二氧化碳',
+                recipe: { 'C': 1, 'O': 2 },
+                props: '無色無味氣體，呈直線形分子（O=C=O）。不助燃，溶於水呈弱酸性。',
+                uses: '植物光合作用原料、氣泡水/汽水碳酸來源、滅火器與溫室氣體。',
+                badgeBg: 'bg-[#e5e7eb] text-[#374151]',
+                xyz: `3\nCO2\nC 0.0000 0.0000 0.0000\nO 0.0000 0.0000 1.1600\nO 0.0000 0.0000 -1.1600`
+            },
+            {
+                id: 'SO2',
+                formula: 'SO₂',
+                name: '二氧化硫',
+                recipe: { 'S': 1, 'O': 2 },
+                props: '具刺鼻臭味的無色毒性氣體，V 形分子，溶於水形成亞硫酸，為酸雨主因之一。',
+                uses: '工業製造硫酸、葡萄酒防腐抗氧化劑、紙漿漂白。',
+                badgeBg: 'bg-[#fef08a] text-[#713f12]',
+                xyz: `3\nSO2\nS 0.0000 0.0000 0.3600\nO 0.0000 1.2400 -0.3600\nO 0.0000 -1.2400 -0.3600`
+            },
+            {
+                id: 'H2S',
+                formula: 'H₂S',
+                name: '硫化氫',
+                recipe: { 'H': 2, 'S': 1 },
+                props: '無色、具強烈臭雞蛋氣味的劇毒氣體，V 形分子，微溶於水呈弱酸性。',
+                uses: '天然溫泉與火山氣體成分、化學沉澱分析與有機硫化合物合成。',
+                badgeBg: 'bg-[#fef3c7] text-[#854d0e]',
+                xyz: `3\nH2S\nS 0.0000 0.0000 0.1000\nH 0.0000 0.9600 -0.8000\nH 0.0000 -0.9600 -0.8000`
+            },
+            {
+                id: 'Cl2',
+                formula: 'Cl₂',
+                name: '氯氣',
+                recipe: { 'Cl': 2 },
+                props: '黃綠色具強烈刺激性與毒性的雙原子氣體，具有強氧化性。',
+                uses: '自來水消毒、漂白劑原料、製造 PVC 與農藥。',
+                badgeBg: 'bg-[#dcfce7] text-[#166534]',
+                xyz: `2\nCl2\nCl 0.0000 0.0000 0.9900\nCl 0.0000 0.0000 -0.9900`
+            },
+            {
+                id: 'NO',
+                formula: 'NO',
+                name: '一氧化氮',
+                recipe: { 'N': 1, 'O': 1 },
+                props: '無色雙原子氣體，在空氣中極易氧化成紅棕色的 NO₂。為人體重要神經傳導物質。',
+                uses: '血管擴張劑（醫學用途）、硝酸生產的中間產物。',
+                badgeBg: 'bg-[#e0e7ff] text-[#3730a3]',
+                xyz: `2\nNO\nN 0.0000 0.0000 -0.5750\nO 0.0000 0.0000 0.5750`
+            },
+            {
+                id: 'H2',
+                formula: 'H₂',
+                name: '氫氣',
+                recipe: { 'H': 2 },
+                props: '密度最小的雙原子氣體，清潔高能燃料。',
+                uses: '清潔能源火箭推進劑、燃料電池。',
+                badgeBg: 'bg-[#daf0f8] text-[#2c6e91]',
+                xyz: `2\nH2\nH 0.0000 0.0000 0.3700\nH 0.0000 0.0000 -0.3700`
+            },
+            {
+                id: 'O2',
+                formula: 'O₂',
+                name: '氧氣',
+                recipe: { 'O': 2 },
+                props: '生命維持必需的雙原子氣體，強助燃性。',
+                uses: '醫療急救、潛水供氧、工業高溫焊接。',
+                badgeBg: 'bg-[#fcdede] text-[#b83b3b]',
+                xyz: `2\nO2\nO 0.0000 0.0000 0.6050\nO 0.0000 0.0000 -0.6050`
+            },
+            {
+                id: 'N2',
+                formula: 'N₂',
+                name: '氮氣',
+                recipe: { 'N': 2 },
+                props: '大氣主要成分，由雙原子透過堅固的三鍵結合，性質極其穩定。',
+                uses: '食品餅乾包裝袋充氣保鮮、液氮超低溫冷凍。',
+                badgeBg: 'bg-[#e8dcf7] text-[#5d4196]',
+                xyz: `2\nN2\nN 0.0000 0.0000 0.5490\nN 0.0000 0.0000 -0.5490`
+            },
+            {
+                id: 'CO',
+                formula: 'CO',
+                name: '一氧化碳',
+                recipe: { 'C': 1, 'O': 1 },
+                props: '無色無味劇毒氣體，燃播不完全時產生，極易與血紅素結合。',
+                uses: '工業鍊鐵冶金還原劑、化工合成氣原料。',
+                badgeBg: 'bg-[#d1d5db] text-[#1f2937]',
+                xyz: `2\nCO\nC 0.0000 0.0000 -0.5650\nO 0.0000 0.0000 0.5650`
+            },
+            {
+                id: 'NaCl',
+                formula: 'NaCl',
+                name: '氯化鈉 (食鹽)',
+                recipe: { 'Na': 1, 'Cl': 1 },
+                props: '白色結晶體，離子鍵結合，易溶於水。',
+                uses: '日常烹調調味、醫院生理食鹽水、化工製造純鹼與氯氣原料。',
+                badgeBg: 'bg-[#fef3c7] text-[#b45309]',
+                xyz: `2\nNaCl\nNa 0.0000 0.0000 -1.1800\nCl 0.0000 0.0000 1.1800`
+            },
+            {
+                id: 'HCl',
+                formula: 'HCl',
+                name: '氯化氫 (鹽酸)',
+                recipe: { 'H': 1, 'Cl': 1 },
+                props: '具強刺激性氣味的雙原子氣體，溶於水形成強酸（鹽酸）。',
+                uses: '人體胃液消化成分、金屬表面除銹與化工清洗。',
+                badgeBg: 'bg-[#dcfce7] text-[#15803d]',
+                xyz: `2\nHCl\nH 0.0000 0.0000 -1.0700\nCl 0.0000 0.0000 0.2000`
+            },
+            {
+                id: 'He_gas',
+                formula: 'He',
+                name: '氦氣',
+                recipe: { 'He': 999 },
+                props: '極輕的無色無味惰性氣體（十八族），沸點接近絕對零度。最穩定的原子之一，常溫下以單原子氣體形式存在。',
+                uses: '空飄氣球與飛艇充氣（安全不燃）、超導磁體（MRI）深低溫冷卻劑。',
+                badgeBg: 'bg-[#f0f9ff] text-[#0284c7]',
+                xyz: `1\nHe\nHe 0.0000 0.0000 0.0000`
+            }
+        ];
+
+        // Application State
+        let cardsOnBoard = [];
+        let discoveredCompounds = new Set(JSON.parse(localStorage.getItem('discoveredCompounds_lite_v3') || '[]'));
+        let soundEnabled = true;
+        let cardIdCounter = 1;
+
+        // Web Audio API Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'spawn') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.exponentialRampToValueAtTime(650, now + 0.12);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'combine') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(420, now);
+                    osc.frequency.setValueAtTime(630, now + 0.08);
+                    osc.frequency.setValueAtTime(950, now + 0.18);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'split' || type === 'delete') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(500, now);
+                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                }
+            } catch (e) {
+                console.warn('Audio play error:', e);
+            }
+        }
+
+        const workspace = document.getElementById('workspace');
+        const cardsContainer = document.getElementById('cards-container');
+        const elementTray = document.getElementById('element-tray');
+        const bottomTray = document.getElementById('bottom-tray');
+        const trayText = document.getElementById('tray-text');
+        const trayIcon = document.getElementById('tray-icon');
+        const emptyHint = document.getElementById('empty-hint');
+        const codexCount = document.getElementById('codex-count');
+        
+        // Three.js 3D 渲染器狀態變數（取代容易引發 OffscreenCanvas 錯誤的 3Dmol）
+        let threeScene = null, threeCamera = null, threeRenderer = null, molGroup = null;
+        let isRotating = false;
+        let isAnimating = false;
+        let prevMousePos = { x: 0, y: 0 };
+        let currentRotation = { x: 0.2, y: 0.3 };
+        let currentZoom = 6.0;
+
+        // 初始化 Three.js 視窗與燈光環境（含安全容錯機制）
+        function initThreeViewer(container, width, height) {
+            container.innerHTML = '';
+
+            try {
+                threeScene = new THREE.Scene();
+                threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+                threeCamera.position.z = currentZoom;
+
+                threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                threeRenderer.setSize(width, height);
+                threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+                container.appendChild(threeRenderer.domElement);
+
+                // 搭配手繪溫暖質感的雙向光源
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+                threeScene.add(ambientLight);
+
+                const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+                dirLight.position.set(5, 10, 7);
+                threeScene.add(dirLight);
+
+                const backLight = new THREE.DirectionalLight(0xfef08a, 0.4);
+                backLight.position.set(-5, -5, -5);
+                threeScene.add(backLight);
+
+                molGroup = new THREE.Group();
+                threeScene.add(molGroup);
+
+                setupViewerControls(container);
+
+                if (!isAnimating) {
+                    isAnimating = true;
+                    animateThree();
+                }
+            } catch (err) {
+                console.warn('WebGL 或 3D 初始化失敗，使用降級顯示：', err);
+                container.innerHTML = '<div class="w-full h-full flex flex-col items-center justify-center text-xs text-[#8c736c] p-4 text-center"><i class="fa-solid fa-circle-exclamation text-xl mb-1 text-[#e07a5f]"></i>3D 渲染受環境限制，請參考右側詳細化學資訊</div>';
+            }
+        }
+
+        // 建立化學鍵圓柱體
+        function createCylinderBond(posA, posB, radius = 0.08, color = 0xd1d5db) {
+            const dir = new THREE.Vector3().subVectors(posB, posA);
+            const len = dir.length();
+            const geom = new THREE.CylinderGeometry(radius, radius, len, 16);
+            const mat = new THREE.MeshPhongMaterial({ color: color, shininess: 50 });
+            const cylinder = new THREE.Mesh(geom, mat);
+            cylinder.position.copy(posA).addScaledVector(dir, 0.5);
+            cylinder.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+            return cylinder;
+        }
+
+        // 解析 XYZ 座標並建構 3D 分子球棍模型
+        function renderMoleculeModel(xyzString) {
+            if (!threeScene || !molGroup) return;
+
+            while (molGroup.children.length > 0) {
+                const obj = molGroup.children[0];
+                if (obj.geometry) obj.geometry.dispose();
+                if (obj.material) obj.material.dispose();
+                molGroup.remove(obj);
+            }
+
+            currentRotation = { x: 0.2, y: 0.3 };
+            molGroup.rotation.set(0.2, 0.3, 0);
+
+            const CPK_COLORS = {
+                'H': 0xffffff,
+                'C': 0x475569,
+                'N': 0x3b82f6,
+                'O': 0xef4444,
+                'Na': 0xa855f7,
+                'S': 0xeab308,
+                'Cl': 0x22c55e,
+                'He': 0x06b6d4
+            };
+
+            const ATOM_RADII = {
+                'H': 0.28,
+                'He': 0.40,
+                'C': 0.46,
+                'N': 0.44,
+                'O': 0.42,
+                'Na': 0.55,
+                'S': 0.52,
+                'Cl': 0.50
+            };
+
+            const lines = xyzString.trim().split('\n');
+            const atoms = [];
+            for (let i = 2; i < lines.length; i++) {
+                const parts = lines[i].trim().split(/\s+/);
+                if (parts.length >= 4) {
+                    atoms.push({
+                        elem: parts[0],
+                        pos: new THREE.Vector3(parseFloat(parts[1]) || 0, parseFloat(parts[2]) || 0, parseFloat(parts[3]) || 0)
+                    });
+                }
+            }
+
+            if (atoms.length === 0) return;
+
+            // 將分子幾何中心移至原點 (0, 0, 0)
+            const center = new THREE.Vector3();
+            atoms.forEach(a => center.add(a.pos));
+            center.divideScalar(atoms.length);
+            atoms.forEach(a => a.pos.sub(center));
+
+            // 繪製原子球體
+            atoms.forEach(atom => {
+                const r = ATOM_RADII[atom.elem] || 0.42;
+                const color = CPK_COLORS[atom.elem] || 0x94a3b8;
+                const geom = new THREE.SphereGeometry(r, 28, 28);
+                const mat = new THREE.MeshPhongMaterial({
+                    color: color,
+                    shininess: 70,
+                    specular: 0x444444
+                });
+                const sphere = new THREE.Mesh(geom, mat);
+                sphere.position.copy(atom.pos);
+                molGroup.add(sphere);
+            });
+
+            // 依鍵長閥值繪製化學鍵棒狀結構
+            for (let i = 0; i < atoms.length; i++) {
+                for (let j = i + 1; j < atoms.length; j++) {
+                    const a1 = atoms[i];
+                    const a2 = atoms[j];
+                    if (a1.elem === 'He' || a2.elem === 'He') continue;
+
+                    const dist = a1.pos.distanceTo(a2.pos);
+                    const maxBond = (a1.elem === 'H' || a2.elem === 'H') ? 1.35 : 
+                        ((a1.elem === 'Na' || a2.elem === 'Na' || a1.elem === 'Cl' || a2.elem === 'Cl' || a1.elem === 'S' || a2.elem === 'S') ? 2.65 : 1.75);
+
+                    if (dist > 0.1 && dist <= maxBond) {
+                        const bondMesh = createCylinderBond(a1.pos, a2.pos, 0.09, 0xd6d3d1);
+                        molGroup.add(bondMesh);
+                    }
+                }
+            }
+
+            let maxDist = 0.5;
+            atoms.forEach(a => {
+                const d = a.pos.length();
+                if (d > maxDist) maxDist = d;
+            });
+            currentZoom = Math.max(3.8, maxDist * 3.2 + 1.2);
+            if (threeCamera) threeCamera.position.z = currentZoom;
+        }
+
+        // 拖曳旋轉與滾輪縮放監聽
+        function setupViewerControls(container) {
+            function onStart(x, y) {
+                isRotating = true;
+                prevMousePos = { x, y };
+            }
+            function onMove(x, y) {
+                if (!isRotating) return;
+                const dx = x - prevMousePos.x;
+                const dy = y - prevMousePos.y;
+                currentRotation.y += dx * 0.01;
+                currentRotation.x += dy * 0.01;
+                prevMousePos = { x, y };
+            }
+            function onEnd() { isRotating = false; }
+
+            container.addEventListener('mousedown', (e) => onStart(e.clientX, e.clientY));
+            window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+            window.addEventListener('mouseup', onEnd);
+
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) onStart(e.touches[0].clientX, e.touches[0].clientY);
+            }, { passive: true });
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1) onMove(e.touches[0].clientX, e.touches[0].clientY);
+            }, { passive: true });
+            window.addEventListener('touchend', onEnd);
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                currentZoom = Math.max(2.5, Math.min(12.0, currentZoom + e.deltaY * 0.008));
+                if (threeCamera) threeCamera.position.z = currentZoom;
+            }, { passive: false });
+        }
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            if (molGroup) {
+                if (!isRotating) {
+                    molGroup.rotation.y += 0.005; // 閒置時緩慢自轉展示
+                } else {
+                    molGroup.rotation.x = currentRotation.x;
+                    molGroup.rotation.y = currentRotation.y;
+                }
+            }
+            if (threeRenderer && threeScene && threeCamera) {
+                threeRenderer.render(threeScene, threeCamera);
+            }
+        }
+
+        function displayThreeMolecule(xyzData) {
+            const container = document.getElementById('molecule-viewer');
+            if (!container) return;
+
+            // 確保彈窗完全顯示且擁有有效尺寸後再渲染
+            setTimeout(() => {
+                const w = container.clientWidth || 300;
+                const h = container.clientHeight || 300;
+
+                if (!threeRenderer) {
+                    initThreeViewer(container, w, h);
+                } else {
+                    if (container.children.length === 0 && threeRenderer.domElement) {
+                        container.appendChild(threeRenderer.domElement);
+                    }
+                    threeCamera.aspect = w / h;
+                    threeCamera.updateProjectionMatrix();
+                    threeRenderer.setSize(w, h);
+                }
+
+                if (xyzData) {
+                    renderMoleculeModel(xyzData);
+                }
+            }, 60);
+        }
+
+        function initApp() {
+            renderElementTray();
+            updateCodexBadge();
+            setupEventListeners();
+        }
+
+        // Render Tray with the elements
+        function renderElementTray() {
+            elementTray.innerHTML = '';
+            Object.keys(ELEMENTS).forEach(key => {
+                const elem = ELEMENTS[key];
+                const btn = document.createElement('div');
+                btn.className = `sketch-border-sm ${elem.colorClass} cursor-pointer p-1 md:p-1.5 flex flex-col items-center justify-center hover:scale-105 active:scale-95 transition-transform min-w-[46px] md:min-w-[58px]`;
+                btn.innerHTML = `
+                    <span class="text-[9px] md:text-[10px] font-bold opacity-75">${elem.number}</span>
+                    <span class="text-base md:text-xl font-extrabold my-0 md:my-0.5 leading-tight">${elem.symbol}</span>
+                    <span class="text-[9px] md:text-[11px] font-bold leading-none">${elem.name}</span>
+                `;
+                
+                // Tap to spawn
+                btn.addEventListener('click', (e) => {
+                    spawnCard('element', key, e.clientX, e.clientY);
+                    
+                    // 氦氣特殊解鎖邏輯：點擊呼叫氦氣卡牌時，自動加入圖鑑
+                    if (key === 'He' && !discoveredCompounds.has('He_gas')) {
+                        discoveredCompounds.add('He_gas');
+                        updateCodexBadge();
+                        showToast(`🎉 發現單原子氣體：氦氣 (He)！已解鎖圖鑑！`);
+                    }
+                });
+
+                elementTray.appendChild(btn);
+            });
+        }
+
+        function updateCodexBadge() {
+            const validIds = new Set(COMPOUNDS.map(c => c.id));
+            const currentCount = Array.from(discoveredCompounds).filter(id => validIds.has(id)).length;
+            codexCount.innerText = currentCount;
+            localStorage.setItem('discoveredCompounds_lite_v3', JSON.stringify(Array.from(discoveredCompounds)));
+        }
+
+        // Spawn Card onto Workspace
+        function spawnCard(type, code, clientX, clientY, customPos = null) {
+            playSound('spawn');
+            emptyHint.style.display = 'none';
+
+            const id = 'card-' + (cardIdCounter++);
+            const cardEl = document.createElement('div');
+            
+            // Calculate spawn coordinates
+            const rect = workspace.getBoundingClientRect();
+            let x = customPos ? customPos.x : (clientX ? clientX - rect.left - 50 : rect.width / 2 - 50 + (Math.random() * 40 - 20));
+            let y = customPos ? customPos.y : (clientY ? clientY - rect.top - 60 : rect.height / 2 - 60 + (Math.random() * 40 - 20));
+
+            // Constrain inside bounds
+            x = Math.max(10, Math.min(rect.width - 110, x));
+            y = Math.max(10, Math.min(rect.height - 140, y));
+
+            const rotate = (Math.random() * 6 - 3).toFixed(1);
+
+            let meta, innerHtml;
+            if (type === 'element') {
+                meta = ELEMENTS[code];
+                cardEl.className = `absolute sketch-border ${meta.colorClass} cursor-grab active:cursor-grabbing w-[100px] h-[130px] md:w-[115px] md:h-[145px] p-2 flex flex-col justify-between select-none transition-shadow`;
+                innerHtml = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold opacity-70">${meta.number}</span>
+                        <button class="info-btn text-xs bg-white/70 hover:bg-white rounded-full w-5 h-5 border border-[#4a3e3d] flex items-center justify-center font-bold" title="點擊這個圖案，可以出現這個元素的詳細說明哦！">ℹ️</button>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-4xl font-extrabold tracking-tight">${meta.symbol}</div>
+                        <div class="text-xs md:text-sm font-bold mt-1">${meta.name}</div>
+                    </div>
+                    <div class="text-[10px] text-center font-semibold text-[#6e5d5a] opacity-80 truncate">
+                        ${meta.english}
+                    </div>
+                `;
+            } else {
+                meta = COMPOUNDS.find(c => c.id === code);
+                cardEl.className = `absolute sketch-border card-compound cursor-grab active:cursor-grabbing w-[115px] h-[140px] md:w-[130px] md:h-[155px] p-2 flex flex-col justify-between select-none transition-shadow`;
+                innerHtml = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#f2cc8f] text-[#523d1d]">化合物</span>
+                        <button class="info-btn text-xs bg-white/70 hover:bg-white rounded-full w-5 h-5 border border-[#4a3e3d] flex items-center justify-center font-bold" title="點擊這個圖案，可以出現這個「分子」(原子)的詳細說明與 3D 模型哦！">ℹ️</button>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl md:text-3xl font-extrabold text-[#d97706] tracking-wide">${meta.formula}</div>
+                        <div class="text-xs md:text-sm font-bold mt-0.5">${meta.name}</div>
+                    </div>
+                    <button class="split-btn w-full bg-[#e07a5f] hover:bg-[#cd684e] text-white text-[11px] font-bold py-1 rounded-lg sketch-btn-sm flex items-center justify-center gap-1">
+                        ✂️ 拆解
+                    </button>
+                `;
+            }
+
+            cardEl.innerHTML = innerHtml;
+            cardEl.style.left = `${x}px`;
+            cardEl.style.top = `${y}px`;
+            cardEl.style.transform = `rotate(${rotate}deg)`;
+
+            cardsContainer.appendChild(cardEl);
+
+            const cardData = { id, type, code, x, y, el: cardEl, rotate };
+            cardsOnBoard.push(cardData);
+
+            // Bind Drag, Touch & Removal Events
+            makeCardDraggable(cardData);
+
+            // Info button event
+            const infoBtn = cardEl.querySelector('.info-btn');
+            infoBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showDetailModal(type, code);
+            });
+
+            // Split button event
+            if (type === 'compound') {
+                const splitBtn = cardEl.querySelector('.split-btn');
+                splitBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    disassembleCompound(cardData);
+                });
+            }
+
+            checkCombinations();
+            return cardData;
+        }
+
+        // Remove card with animation
+        function removeCardWithAnimation(cardData, showMessage = true) {
+            playSound('delete');
+            const el = cardData.el;
+            el.style.transform = 'scale(0) rotate(15deg)';
+            el.style.opacity = '0';
+            el.style.transition = 'all 0.2s ease-out';
+
+            setTimeout(() => {
+                el.remove();
+                cardsOnBoard = cardsOnBoard.filter(c => c.id !== cardData.id);
+                if (cardsOnBoard.length === 0) {
+                    emptyHint.style.display = 'flex';
+                }
+            }, 200);
+
+            if (showMessage) {
+                showToast(`🗑️ 已回收卡片！`);
+            }
+        }
+
+        function makeCardDraggable(cardData) {
+            const el = cardData.el;
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            let initialX = 0, initialY = 0;
+            let totalDist = 0;
+            let lastTap = 0;
+
+            // Double click event for desktop
+            el.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.info-btn') || e.target.closest('.split-btn')) return;
+                e.stopPropagation();
+                removeCardWithAnimation(cardData);
+            });
+
+            function onStart(e) {
+                if (e.target.closest('.info-btn') || e.target.closest('.split-btn')) return;
+
+                // Touch Double Tap detection for mobile deletion
+                const now = Date.now();
+                if (!el.classList.contains('can-combine') && (now - lastTap < 300)) {
+                    e.preventDefault();
+                    removeCardWithAnimation(cardData);
+                    return;
+                }
+                lastTap = now;
+
+                isDragging = true;
+                totalDist = 0;
+                el.classList.add('dragging');
+                
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                startX = clientX;
+                startY = clientY;
+                initialX = cardData.x;
+                initialY = cardData.y;
+
+                if (cardsContainer.lastElementChild !== el) {
+                    cardsContainer.appendChild(el);
+                }
+            }
+
+            function onMove(e) {
+                if (!isDragging) return;
+
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+                totalDist = Math.hypot(dx, dy);
+
+                if (totalDist > 5) {
+                    e.preventDefault();
+                }
+
+                cardData.x = initialX + dx;
+                cardData.y = initialY + dy;
+
+                el.style.left = `${cardData.x}px`;
+                el.style.top = `${cardData.y}px`;
+
+                // Check if card is dragged over bottom tray for recycling
+                const trayRect = bottomTray.getBoundingClientRect();
+                if (clientY >= trayRect.top - 20) {
+                    bottomTray.classList.add('tray-recycle-active');
+                    trayText.innerText = '放開滑鼠/手指，直接回收此卡牌！';
+                    trayIcon.className = 'fa-solid fa-trash-can text-red-600 animate-bounce';
+                } else {
+                    bottomTray.classList.remove('tray-recycle-active');
+                    trayText.innerText = '選擇元素卡牌（點擊放進實驗區，拉回此區可回收）：';
+                    trayIcon.className = 'fa-solid fa-hand-pointer text-[#e07a5f]';
+                }
+
+                checkCombinations();
+            }
+
+            function onEnd(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                el.classList.remove('dragging');
+
+                bottomTray.classList.remove('tray-recycle-active');
+                trayText.innerText = '選擇元素卡牌（點擊放進實驗區，拉回此區可回收）：';
+                trayIcon.className = 'fa-solid fa-hand-pointer text-[#e07a5f]';
+
+                const clientY = e.changedTouches ? e.changedTouches[0].clientY : (e.clientY || startY);
+                const trayRect = bottomTray.getBoundingClientRect();
+
+                // Drop onto bottom tray after dragging -> Delete card!
+                if (clientY >= trayRect.top - 20 && totalDist > 10) {
+                    removeCardWithAnimation(cardData);
+                    return;
+                }
+
+                checkCombinations();
+
+                // Single-click trigger: If displacement is minimal and card is glowing -> Synthesize!
+                if (totalDist < 8 && el.classList.contains('can-combine')) {
+                    trySynthesizeCard(cardData);
+                }
+            }
+
+            el.addEventListener('mousedown', onStart);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+
+            el.addEventListener('touchstart', onStart, { passive: false });
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+        }
+
+        function calculateOverlap(cardA, cardB) {
+            const rectA = cardA.el.getBoundingClientRect();
+            const rectB = cardB.el.getBoundingClientRect();
+
+            const margin = 10;
+            const xOverlap = Math.max(0, Math.min(rectA.right + margin, rectB.right + margin) - Math.max(rectA.left - margin, rectB.left - margin));
+            const yOverlap = Math.max(0, Math.min(rectA.bottom + margin, rectB.bottom + margin) - Math.max(rectA.top - margin, rectB.top - margin));
+
+            const intersectionArea = xOverlap * yOverlap;
+            const minArea = Math.min(rectA.width * rectA.height, rectB.width * rectB.height);
+
+            return minArea > 0 ? (intersectionArea / minArea) : 0;
+        }
+
+        function getOverlappingClusters() {
+            const elementCards = cardsOnBoard.filter(c => c.type === 'element');
+            const visited = new Set();
+            const clusters = [];
+
+            for (let i = 0; i < elementCards.length; i++) {
+                if (visited.has(elementCards[i].id)) continue;
+
+                const cluster = [];
+                const queue = [elementCards[i]];
+                visited.add(elementCards[i].id);
+
+                while (queue.length > 0) {
+                    const current = queue.shift();
+                    cluster.push(current);
+
+                    for (let j = 0; j < elementCards.length; j++) {
+                        const neighbor = elementCards[j];
+                        if (!visited.has(neighbor.id)) {
+                            if (calculateOverlap(current, neighbor) >= 0.12) {
+                                visited.add(neighbor.id);
+                                queue.push(neighbor);
+                            }
+                        }
+                    }
+                }
+
+                if (cluster.length > 1) {
+                    clusters.push(cluster);
+                }
+            }
+
+            return clusters;
+        }
+
+        function findMatchingRecipe(cardsCluster) {
+            const counts = {};
+            cardsCluster.forEach(c => counts[c.code] = (counts[c.code] || 0) + 1);
+
+            for (let comp of COMPOUNDS) {
+                let match = true;
+                const rKeys = Object.keys(comp.recipe);
+                for (let k of rKeys) {
+                    if ((counts[k] || 0) < comp.recipe[k]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    const matchedCards = [];
+                    const recipeCopy = { ...comp.recipe };
+
+                    for (let card of cardsCluster) {
+                        if (recipeCopy[card.code] && recipeCopy[card.code] > 0) {
+                            matchedCards.push(card);
+                            recipeCopy[card.code]--;
+                        }
+                    }
+
+                    return { compound: comp, usedCards: matchedCards };
+                }
+            }
+            return null;
+        }
+
+        function checkCombinations() {
+            cardsOnBoard.forEach(c => c.el.classList.remove('can-combine'));
+
+            const clusters = getOverlappingClusters();
+            clusters.forEach(cluster => {
+                const result = findMatchingRecipe(cluster);
+                if (result) {
+                    result.usedCards.forEach(c => c.el.classList.add('can-combine'));
+                }
+            });
+        }
+
+        function trySynthesizeCard(cardData) {
+            if (!cardData.el.classList.contains('can-combine')) return;
+
+            const clusters = getOverlappingClusters();
+            for (let cluster of clusters) {
+                if (cluster.some(c => c.id === cardData.id)) {
+                    const matchResult = findMatchingRecipe(cluster);
+                    if (matchResult) {
+                        executeSynthesis(matchResult);
+                        break;
+                    }
+                }
+            }
+        }
+
+        function executeSynthesis(matchResult) {
+            const { compound, usedCards } = matchResult;
+
+            const avgX = usedCards.reduce((sum, c) => sum + c.x, 0) / usedCards.length;
+            const avgY = usedCards.reduce((sum, c) => sum + c.y, 0) / usedCards.length;
+
+            usedCards.forEach(c => {
+                c.el.style.transform = 'scale(0) rotate(20deg)';
+                c.el.style.opacity = '0';
+                c.el.style.transition = 'all 0.2s ease';
+                setTimeout(() => c.el.remove(), 200);
+                cardsOnBoard = cardsOnBoard.filter(card => card.id !== c.id);
+            });
+
+            playSound('combine');
+            showToast(`🎉 成功合成：${compound.name} (${compound.formula})！`);
+
+            setTimeout(() => {
+                spawnCard('compound', compound.id, null, null, { x: avgX, y: avgY });
+            }, 180);
+
+            if (!discoveredCompounds.has(compound.id)) {
+                discoveredCompounds.add(compound.id);
+                updateCodexBadge();
+            }
+        }
+
+        function disassembleCompound(cardData) {
+            const compound = COMPOUNDS.find(c => c.id === cardData.code);
+            if (!compound) return;
+
+            playSound('split');
+
+            cardData.el.style.transform = 'scale(0)';
+            setTimeout(() => cardData.el.remove(), 200);
+            cardsOnBoard = cardsOnBoard.filter(card => card.id !== cardData.id);
+
+            const recipe = compound.recipe;
+            let offsetIndex = 0;
+            const totalElements = Object.values(recipe).reduce((a, b) => a + b, 0);
+
+            Object.keys(recipe).forEach(elemCode => {
+                const count = recipe[elemCode];
+                for (let i = 0; i < count; i++) {
+                    const angle = (offsetIndex / totalElements) * Math.PI * 2;
+                    const radius = 65;
+                    const posX = cardData.x + Math.cos(angle) * radius;
+                    const posY = cardData.y + Math.sin(angle) * radius;
+
+                    setTimeout(() => {
+                        spawnCard('element', elemCode, null, null, { x: posX, y: posY });
+                    }, offsetIndex * 50);
+
+                    offsetIndex++;
+                }
+            });
+
+            showToast(`✂️ 已將 ${compound.name} 拆解為基礎元素！`);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-10px]');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2200);
+        }
+
+        function showDetailModal(type, code) {
+            const modal = document.getElementById('detail-modal');
+            const modalContent = document.getElementById('detail-modal-content');
+            const container3D = document.getElementById('modal-3d-container');
+            const infoContainer = document.getElementById('modal-info-container');
+            
+            const badge = document.getElementById('modal-badge');
+            const title = document.getElementById('modal-title');
+            const sub = document.getElementById('modal-sub');
+            const props = document.getElementById('modal-props');
+            const uses = document.getElementById('modal-uses');
+            const typeLabel = document.getElementById('modal-type');
+
+            const isHeElement = (type === 'element' && code === 'He');
+
+            modal.classList.remove('hidden');
+
+            if (type === 'element' && !isHeElement) {
+                // 單一元素時，隱藏 3D 視窗
+                modalContent.classList.remove('max-w-4xl');
+                modalContent.classList.add('max-w-lg');
+                container3D.classList.add('hidden');
+                container3D.classList.remove('flex', 'md:flex');
+                infoContainer.classList.remove('md:w-1/2');
+
+                const elem = ELEMENTS[code];
+                badge.className = `w-20 h-24 rounded-2xl sketch-border flex flex-col items-center justify-center font-bold text-3xl shrink-0 ${elem.badgeBg}`;
+                badge.innerHTML = `<span>${elem.symbol}</span><span class="text-xs mt-1">№ ${elem.number}</span>`;
+                title.innerText = elem.name;
+                sub.innerText = elem.english;
+                props.innerText = elem.props;
+                uses.innerText = elem.uses;
+                typeLabel.innerText = elem.group || '化學元素';
+                typeLabel.className = `text-xs font-bold px-2 py-1 rounded-md ${elem.badgeBg}`;
+            } else {
+                // 「分子」或氦氣時，展開加寬版面並顯示 3D 視窗
+                modalContent.classList.add('max-w-4xl');
+                modalContent.classList.remove('max-w-lg');
+                container3D.classList.remove('hidden');
+                container3D.classList.add('flex', 'md:flex');
+                infoContainer.classList.add('md:w-1/2');
+
+                let targetItem = null;
+
+                if (isHeElement) {
+                    targetItem = ELEMENTS[code];
+                    badge.className = `w-20 h-24 rounded-2xl sketch-border flex flex-col items-center justify-center font-bold text-3xl shrink-0 ${targetItem.badgeBg}`;
+                    badge.innerHTML = `<span>${targetItem.symbol}</span><span class="text-xs mt-1">№ ${targetItem.number}</span>`;
+                    title.innerText = targetItem.name + ' (單原子氣體)';
+                    sub.innerText = targetItem.english;
+                    props.innerText = targetItem.props;
+                    uses.innerText = targetItem.uses;
+                    typeLabel.innerText = targetItem.group || '化學元素';
+                    typeLabel.className = `text-xs font-bold px-2 py-1 rounded-md ${targetItem.badgeBg}`;
+                } else {
+                    targetItem = COMPOUNDS.find(c => c.id === code);
+                    badge.className = `w-20 h-24 rounded-2xl sketch-border flex flex-col items-center justify-center font-bold text-2xl shrink-0 ${targetItem.badgeBg}`;
+                    badge.innerHTML = `<span>${targetItem.formula}</span>`;
+                    title.innerText = targetItem.name;
+                    sub.innerText = `分子化學式：${targetItem.formula}`;
+                    props.innerText = targetItem.props;
+                    uses.innerText = targetItem.uses;
+                    typeLabel.innerText = '合成「分子」';
+                    typeLabel.className = 'text-xs font-bold px-2 py-1 rounded-md bg-[#fef3c7] text-[#b45309]';
+                }
+
+                // 透過原生 Three.js 渲染 3D 模型
+                if (targetItem && targetItem.xyz) {
+                    displayThreeMolecule(targetItem.xyz);
+                }
+            }
+        }
+
+        function openCodexModal() {
+            const grid = document.getElementById('codex-grid');
+            grid.innerHTML = '';
+
+            COMPOUNDS.forEach(comp => {
+                const isUnlocked = discoveredCompounds.has(comp.id);
+                const card = document.createElement('div');
+                
+                if (isUnlocked) {
+                    card.className = `sketch-border-sm bg-[#faf6ed] p-2.5 md:p-3 flex items-center justify-between cursor-pointer hover:bg-[#f3ead8] transition-colors`;
+                    card.innerHTML = `
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-11 h-11 md:w-12 md:h-12 rounded-xl sketch-border-sm ${comp.badgeBg} flex items-center justify-center font-extrabold text-sm md:text-base shrink-0">
+                                ${comp.formula}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-[#4a3e3d] text-sm md:text-base">${comp.name}</h4>
+                                <p class="text-[11px] md:text-xs text-[#7d6b69] line-clamp-1">${comp.uses}</p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] md:text-xs bg-[#81b29a] text-white font-bold px-2 py-0.5 rounded-md shrink-0">已解鎖</span>
+                    `;
+                    card.addEventListener('click', () => {
+                        document.getElementById('codex-modal').classList.add('hidden');
+                        showDetailModal('compound', comp.id);
+                    });
+                } else {
+                    card.className = `sketch-border-sm bg-[#e8e2d5] opacity-60 p-2.5 md:p-3 flex items-center gap-2.5`;
+                    card.innerHTML = `
+                        <div class="w-11 h-11 md:w-12 md:h-12 rounded-xl sketch-border-sm bg-[#d1c7b7] flex items-center justify-center font-bold text-lg text-[#7a6f61] shrink-0">
+                            🔒
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-[#6e6358] text-sm md:text-base">未解鎖「分子」</h4>
+                            <p class="text-[11px] md:text-xs text-[#8c8074]">嘗試重疊不同元素卡牌來發現它！</p>
+                        </div>
+                    `;
+                }
+
+                grid.appendChild(card);
+            });
+
+            document.getElementById('codex-modal').classList.remove('hidden');
+        }
+
+        function setupEventListeners() {
+            document.getElementById('modal-close').addEventListener('click', () => {
+                document.getElementById('detail-modal').classList.add('hidden');
+            });
+            document.getElementById('modal-action-btn').addEventListener('click', () => {
+                document.getElementById('detail-modal').classList.add('hidden');
+            });
+
+            document.getElementById('btn-codex').addEventListener('click', openCodexModal);
+            document.getElementById('codex-close').addEventListener('click', () => {
+                document.getElementById('codex-modal').classList.add('hidden');
+            });
+
+            document.getElementById('btn-clear').addEventListener('click', () => {
+                cardsOnBoard.forEach(c => c.el.remove());
+                cardsOnBoard = [];
+                emptyHint.style.display = 'flex';
+                showToast('已清空桌面卡牌！');
+            });
+
+            document.getElementById('btn-sound').addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                const icon = document.getElementById('sound-icon');
+                if (soundEnabled) {
+                    icon.className = 'fa-solid fa-volume-high';
+                    showToast('音效：已開啟');
+                } else {
+                    icon.className = 'fa-solid fa-volume-xmark';
+                    showToast('音效：已關閉');
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if (cardsOnBoard.length === 0) {
+                    emptyHint.style.display = 'flex';
+                }
+                const container = document.getElementById('molecule-viewer');
+                if (threeRenderer && threeCamera && container && container.clientWidth > 0) {
+                    const w = container.clientWidth;
+                    const h = container.clientHeight;
+                    threeCamera.aspect = w / h;
+                    threeCamera.updateProjectionMatrix();
+                    threeRenderer.setSize(w, h);
+                }
+            });
+        }
+
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>
