@@ -6,7 +6,6 @@
     <title>原子對對碰-精簡版</title>
     <!-- 引入 Three.js 進行高效穩定的 3D 分子渲染，徹底解決 OffscreenCanvas 錯誤 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,400;0,600;0,700;1,500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -120,6 +119,8 @@
             border-radius: 10px;
         }
     </style>
+    <!-- Tailwind CSS 已預先編譯（v3.4.17），只保留本頁用到的樣式，放在自訂樣式之後，與原本 CDN 版的樣式優先順序相同 -->
+    <style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.\!container{width:100%!important}.container{width:100%}@media (min-width:640px){.\!container{max-width:640px!important}.container{max-width:640px}}@media (min-width:768px){.\!container{max-width:768px!important}.container{max-width:768px}}@media (min-width:1024px){.\!container{max-width:1024px!important}.container{max-width:1024px}}@media (min-width:1280px){.\!container{max-width:1280px!important}.container{max-width:1280px}}@media (min-width:1536px){.\!container{max-width:1536px!important}.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0}.bottom-2{bottom:.5rem}.left-1\/2{left:50%}.left-2{left:.5rem}.left-3{left:.75rem}.right-2{right:.5rem}.right-3{right:.75rem}.top-2{top:.5rem}.top-20{top:5rem}.top-3{top:.75rem}.z-10{z-index:10}.z-20{z-index:20}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-0{margin-top:0;margin-bottom:0}.mb-1{margin-bottom:.25rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-5{margin-top:1.25rem}.line-clamp-1{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1}.flex{display:flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-11{height:2.75rem}.h-20{height:5rem}.h-24{height:6rem}.h-5{height:1.25rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[130px\]{height:130px}.h-\[140px\]{height:140px}.h-full{height:100%}.max-h-32{max-height:8rem}.max-h-\[85vh\]{max-height:85vh}.min-h-\[250px\]{min-height:250px}.min-h-screen{min-height:100vh}.w-11{width:2.75rem}.w-20{width:5rem}.w-5{width:1.25rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-\[100px\]{width:100px}.w-\[115px\]{width:115px}.w-full{width:100%}.min-w-\[46px\]{min-width:46px}.max-w-2xl{max-width:42rem}.max-w-4xl{max-width:56rem}.max-w-6xl{max-width:72rem}.max-w-lg{max-width:32rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-x-1\/2,.translate-y-0{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-0{--tw-translate-y:0px}.translate-y-\[-10px\]{--tw-translate-y:-10px}.transform,.translate-y-\[-10px\]{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes bounce{0%,to{transform:translateY(-25%);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:none;animation-timing-function:cubic-bezier(0,0,.2,1)}}.animate-bounce{animation:bounce 1s infinite}.cursor-grab{cursor:grab}.cursor-move{cursor:move}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.resize{resize:both}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-1\.5>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.375rem*var(--tw-space-x-reverse));margin-left:calc(.375rem*(1 - var(--tw-space-x-reverse)))}.space-x-2>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.5rem*var(--tw-space-x-reverse));margin-left:calc(.5rem*(1 - var(--tw-space-x-reverse)))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-4{border-width:4px}.border-b-2{border-bottom-width:2px}.border-b-4{border-bottom-width:4px}.border-t-4{border-top-width:4px}.border-dashed{border-style:dashed}.border-\[\#4a3e3d\]{--tw-border-opacity:1;border-color:rgb(74 62 61/var(--tw-border-opacity,1))}.border-\[\#8c7b6b\]{--tw-border-opacity:1;border-color:rgb(140 123 107/var(--tw-border-opacity,1))}.border-\[\#8d7b78\]{--tw-border-opacity:1;border-color:rgb(141 123 120/var(--tw-border-opacity,1))}.border-\[\#9ebb93\]{--tw-border-opacity:1;border-color:rgb(158 187 147/var(--tw-border-opacity,1))}.border-\[\#b8a994\]{--tw-border-opacity:1;border-color:rgb(184 169 148/var(--tw-border-opacity,1))}.border-\[\#bfae99\]{--tw-border-opacity:1;border-color:rgb(191 174 153/var(--tw-border-opacity,1))}.border-\[\#e2d8be\]{--tw-border-opacity:1;border-color:rgb(226 216 190/var(--tw-border-opacity,1))}.bg-\[\#81b29a\]{--tw-bg-opacity:1;background-color:rgb(129 178 154/var(--tw-bg-opacity,1))}.bg-\[\#c4b59c\]{--tw-bg-opacity:1;background-color:rgb(196 181 156/var(--tw-bg-opacity,1))}.bg-\[\#d1c7b7\]{--tw-bg-opacity:1;background-color:rgb(209 199 183/var(--tw-bg-opacity,1))}.bg-\[\#d1d5db\]{--tw-bg-opacity:1;background-color:rgb(209 213 219/var(--tw-bg-opacity,1))}.bg-\[\#daf0f8\]{--tw-bg-opacity:1;background-color:rgb(218 240 248/var(--tw-bg-opacity,1))}.bg-\[\#dbeafe\]{--tw-bg-opacity:1;background-color:rgb(219 234 254/var(--tw-bg-opacity,1))}.bg-\[\#dcfce7\]{--tw-bg-opacity:1;background-color:rgb(220 252 231/var(--tw-bg-opacity,1))}.bg-\[\#e07a5f\]{--tw-bg-opacity:1;background-color:rgb(224 122 95/var(--tw-bg-opacity,1))}.bg-\[\#e0e7ff\]{--tw-bg-opacity:1;background-color:rgb(224 231 255/var(--tw-bg-opacity,1))}.bg-\[\#e0f2fe\]{--tw-bg-opacity:1;background-color:rgb(224 242 254/var(--tw-bg-opacity,1))}.bg-\[\#e2d8be\]{--tw-bg-opacity:1;background-color:rgb(226 216 190/var(--tw-bg-opacity,1))}.bg-\[\#e4eedd\]{--tw-bg-opacity:1;background-color:rgb(228 238 221/var(--tw-bg-opacity,1))}.bg-\[\#e5e7eb\]{--tw-bg-opacity:1;background-color:rgb(229 231 235/var(--tw-bg-opacity,1))}.bg-\[\#e8dcf7\]{--tw-bg-opacity:1;background-color:rgb(232 220 247/var(--tw-bg-opacity,1))}.bg-\[\#e8e2d5\]{--tw-bg-opacity:1;background-color:rgb(232 226 213/var(--tw-bg-opacity,1))}.bg-\[\#e8f8e8\]{--tw-bg-opacity:1;background-color:rgb(232 248 232/var(--tw-bg-opacity,1))}.bg-\[\#ebdcc2\]{--tw-bg-opacity:1;background-color:rgb(235 220 194/var(--tw-bg-opacity,1))}.bg-\[\#eeeef0\]{--tw-bg-opacity:1;background-color:rgb(238 238 240/var(--tw-bg-opacity,1))}.bg-\[\#efe8f8\]{--tw-bg-opacity:1;background-color:rgb(239 232 248/var(--tw-bg-opacity,1))}.bg-\[\#f0e6d2\]{--tw-bg-opacity:1;background-color:rgb(240 230 210/var(--tw-bg-opacity,1))}.bg-\[\#f0f9ff\]{--tw-bg-opacity:1;background-color:rgb(240 249 255/var(--tw-bg-opacity,1))}.bg-\[\#f2cc8f\]{--tw-bg-opacity:1;background-color:rgb(242 204 143/var(--tw-bg-opacity,1))}.bg-\[\#f2ebd9\]{--tw-bg-opacity:1;background-color:rgb(242 235 217/var(--tw-bg-opacity,1))}.bg-\[\#f3e8ff\]{--tw-bg-opacity:1;background-color:rgb(243 232 255/var(--tw-bg-opacity,1))}.bg-\[\#f87171\]{--tw-bg-opacity:1;background-color:rgb(248 113 113/var(--tw-bg-opacity,1))}.bg-\[\#faf6ed\]{--tw-bg-opacity:1;background-color:rgb(250 246 237/var(--tw-bg-opacity,1))}.bg-\[\#fbf6ea\]{--tw-bg-opacity:1;background-color:rgb(251 246 234/var(--tw-bg-opacity,1))}.bg-\[\#fcdede\]{--tw-bg-opacity:1;background-color:rgb(252 222 222/var(--tw-bg-opacity,1))}.bg-\[\#fed7aa\]{--tw-bg-opacity:1;background-color:rgb(254 215 170/var(--tw-bg-opacity,1))}.bg-\[\#fee2e2\]{--tw-bg-opacity:1;background-color:rgb(254 226 226/var(--tw-bg-opacity,1))}.bg-\[\#fef08a\]{--tw-bg-opacity:1;background-color:rgb(254 240 138/var(--tw-bg-opacity,1))}.bg-\[\#fef3c7\]{--tw-bg-opacity:1;background-color:rgb(254 243 199/var(--tw-bg-opacity,1))}.bg-\[\#fef9c3\]{--tw-bg-opacity:1;background-color:rgb(254 249 195/var(--tw-bg-opacity,1))}.bg-\[\#ffedd5\]{--tw-bg-opacity:1;background-color:rgb(255 237 213/var(--tw-bg-opacity,1))}.bg-\[\#fff6df\]{--tw-bg-opacity:1;background-color:rgb(255 246 223/var(--tw-bg-opacity,1))}.bg-\[\#fffdfa\]\/90{background-color:rgba(255,253,250,.9)}.bg-black\/50{background-color:rgba(0,0,0,.5)}.bg-transparent{background-color:transparent}.bg-white\/70{background-color:hsla(0,0%,100%,.7)}.bg-white\/80{background-color:hsla(0,0%,100%,.8)}.p-1{padding:.25rem}.p-1\.5{padding:.375rem}.p-2{padding:.5rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-3{padding-top:.75rem}.pb-3,.py-3{padding-bottom:.75rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-.025em}.tracking-wide{letter-spacing:.025em}.text-\[\#0284c7\]{--tw-text-opacity:1;color:rgb(2 132 199/var(--tw-text-opacity,1))}.text-\[\#0369a1\]{--tw-text-opacity:1;color:rgb(3 105 161/var(--tw-text-opacity,1))}.text-\[\#15803d\]{--tw-text-opacity:1;color:rgb(21 128 61/var(--tw-text-opacity,1))}.text-\[\#166534\]{--tw-text-opacity:1;color:rgb(22 101 52/var(--tw-text-opacity,1))}.text-\[\#1d4ed8\]{--tw-text-opacity:1;color:rgb(29 78 216/var(--tw-text-opacity,1))}.text-\[\#1f2937\]{--tw-text-opacity:1;color:rgb(31 41 55/var(--tw-text-opacity,1))}.text-\[\#243d20\]{--tw-text-opacity:1;color:rgb(36 61 32/var(--tw-text-opacity,1))}.text-\[\#2c6e91\]{--tw-text-opacity:1;color:rgb(44 110 145/var(--tw-text-opacity,1))}.text-\[\#2f4d2a\]{--tw-text-opacity:1;color:rgb(47 77 42/var(--tw-text-opacity,1))}.text-\[\#3730a3\]{--tw-text-opacity:1;color:rgb(55 48 163/var(--tw-text-opacity,1))}.text-\[\#374151\]{--tw-text-opacity:1;color:rgb(55 65 81/var(--tw-text-opacity,1))}.text-\[\#388e3c\]{--tw-text-opacity:1;color:rgb(56 142 60/var(--tw-text-opacity,1))}.text-\[\#3b302f\]{--tw-text-opacity:1;color:rgb(59 48 47/var(--tw-text-opacity,1))}.text-\[\#4a3e3d\]{--tw-text-opacity:1;color:rgb(74 62 61/var(--tw-text-opacity,1))}.text-\[\#523d1d\]{--tw-text-opacity:1;color:rgb(82 61 29/var(--tw-text-opacity,1))}.text-\[\#524442\]{--tw-text-opacity:1;color:rgb(82 68 66/var(--tw-text-opacity,1))}.text-\[\#555866\]{--tw-text-opacity:1;color:rgb(85 88 102/var(--tw-text-opacity,1))}.text-\[\#5c4d4a\]{--tw-text-opacity:1;color:rgb(92 77 74/var(--tw-text-opacity,1))}.text-\[\#5d4196\]{--tw-text-opacity:1;color:rgb(93 65 150/var(--tw-text-opacity,1))}.text-\[\#6b21a8\]{--tw-text-opacity:1;color:rgb(107 33 168/var(--tw-text-opacity,1))}.text-\[\#6b52a1\]{--tw-text-opacity:1;color:rgb(107 82 161/var(--tw-text-opacity,1))}.text-\[\#6b5a58\]{--tw-text-opacity:1;color:rgb(107 90 88/var(--tw-text-opacity,1))}.text-\[\#6e5d5a\]{--tw-text-opacity:1;color:rgb(110 93 90/var(--tw-text-opacity,1))}.text-\[\#6e6358\]{--tw-text-opacity:1;color:rgb(110 99 88/var(--tw-text-opacity,1))}.text-\[\#713f12\]{--tw-text-opacity:1;color:rgb(113 63 18/var(--tw-text-opacity,1))}.text-\[\#7a6f61\]{--tw-text-opacity:1;color:rgb(122 111 97/var(--tw-text-opacity,1))}.text-\[\#7d6b69\]{--tw-text-opacity:1;color:rgb(125 107 105/var(--tw-text-opacity,1))}.text-\[\#854d0e\]{--tw-text-opacity:1;color:rgb(133 77 14/var(--tw-text-opacity,1))}.text-\[\#8c736c\]{--tw-text-opacity:1;color:rgb(140 115 108/var(--tw-text-opacity,1))}.text-\[\#8c8074\]{--tw-text-opacity:1;color:rgb(140 128 116/var(--tw-text-opacity,1))}.text-\[\#9a3412\]{--tw-text-opacity:1;color:rgb(154 52 18/var(--tw-text-opacity,1))}.text-\[\#b45309\]{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.text-\[\#b83b3b\]{--tw-text-opacity:1;color:rgb(184 59 59/var(--tw-text-opacity,1))}.text-\[\#d97706\]{--tw-text-opacity:1;color:rgb(217 119 6/var(--tw-text-opacity,1))}.text-\[\#dc2626\]{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-\[\#e07a5f\]{--tw-text-opacity:1;color:rgb(224 122 95/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.opacity-0{opacity:0}.opacity-100{opacity:1}.opacity-40{opacity:.4}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.opacity-80{opacity:.8}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-lg,.shadow-sm{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-200{transition-duration:.2s}.duration-300{transition-duration:.3s}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-\[\#6fa088\]:hover{--tw-bg-opacity:1;background-color:rgb(111 160 136/var(--tw-bg-opacity,1))}.hover\:bg-\[\#cd684e\]:hover{--tw-bg-opacity:1;background-color:rgb(205 104 78/var(--tw-bg-opacity,1))}.hover\:bg-\[\#e0b87b\]:hover{--tw-bg-opacity:1;background-color:rgb(224 184 123/var(--tw-bg-opacity,1))}.hover\:bg-\[\#f3ead8\]:hover{--tw-bg-opacity:1;background-color:rgb(243 234 216/var(--tw-bg-opacity,1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.active\:cursor-grabbing:active{cursor:grabbing}@media (min-width:640px){.sm\:block{display:block}.sm\:inline{display:inline}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (min-width:768px){.md\:my-0\.5{margin-top:.125rem;margin-bottom:.125rem}.md\:flex{display:flex}.md\:h-10{height:2.5rem}.md\:h-12{height:3rem}.md\:h-24{height:6rem}.md\:h-\[145px\]{height:145px}.md\:h-\[155px\]{height:155px}.md\:max-h-none{max-height:none}.md\:min-h-\[350px\]{min-height:350px}.md\:w-1\/2{width:50%}.md\:w-10{width:2.5rem}.md\:w-12{width:3rem}.md\:w-24{width:6rem}.md\:w-\[115px\]{width:115px}.md\:w-\[130px\]{width:130px}.md\:min-w-\[58px\]{min-width:58px}.md\:flex-row{flex-direction:row}.md\:gap-1\.5{gap:.375rem}.md\:space-x-3>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.75rem*var(--tw-space-x-reverse));margin-left:calc(.75rem*(1 - var(--tw-space-x-reverse)))}.md\:p-1\.5{padding:.375rem}.md\:p-2{padding:.5rem}.md\:p-3{padding:.75rem}.md\:px-3{padding-left:.75rem;padding-right:.75rem}.md\:px-4{padding-left:1rem;padding-right:1rem}.md\:py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.md\:py-3{padding-top:.75rem;padding-bottom:.75rem}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-4xl{font-size:2.25rem;line-height:2.5rem}.md\:text-\[10px\]{font-size:10px}.md\:text-\[11px\]{font-size:11px}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}.md\:text-sm{font-size:.875rem;line-height:1.25rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}.md\:text-xs{font-size:.75rem;line-height:1rem}}</style>
 </head>
 <body class="min-h-screen flex flex-col justify-between select-none overflow-hidden relative">
 
@@ -183,7 +184,7 @@
 
             <!-- Non-floating embedded signature -->
             <div style="text-align: right; width: 100%; margin-top: 4px; padding-right: 6px; font-size: 0.75rem; color: #786c6b;">
-                by Jay`s Lab 紅樓老頭子 系統版本：v2.0
+                by Jay`s Lab 紅樓老頭子 系統版本：v2.4
             </div>
         </div>
     </footer>
@@ -196,11 +197,14 @@
             </button>
             
             <!-- Left Side: 3D Viewer -->
-            <div id="modal-3d-container" class="hidden w-full md:w-1/2 flex-col border-2 border-dashed border-[#b8a994] rounded-xl bg-[#f8f5ee] relative min-h-[250px] md:min-h-[350px] overflow-hidden">
+            <div id="modal-3d-container" class="hidden w-full md:w-1/2 flex-col border-2 border-dashed border-[#8c7b6b] rounded-xl bg-[#c4b59c] relative min-h-[250px] md:min-h-[350px] overflow-hidden">
                 <div class="absolute top-2 left-3 text-xs font-bold text-[#8c736c] z-10 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md border border-[#e2d8be]">
                     <i class="fa-solid fa-cube text-[#e07a5f]"></i> 3D 模型 (可拖曳旋轉/滾輪縮放)
                 </div>
                 <div id="molecule-viewer" class="w-full h-full absolute inset-0 cursor-move"></div>
+                <div class="absolute bottom-2 left-2 right-2 text-[10px] leading-tight text-[#8c736c] z-10 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-md border border-[#e2d8be] pointer-events-none">
+                    一根棒＝單鍵・兩根＝雙鍵・三根＝三鍵｜細虛線＝離子鍵
+                </div>
             </div>
 
             <!-- Right Side: Details -->
@@ -372,7 +376,8 @@
                 props: '最簡單的有機物，無色無味極易燃氣體，具有經典的正四面體幾何結構。',
                 uses: '天然氣與沼氣的主要成分、家庭廚房瓦斯與發電燃料。',
                 badgeBg: 'bg-[#fef9c3] text-[#854d0e]',
-                xyz: `5\nCH4\nC 0.0000 0.0000 0.0000\nH 0.6293 0.6293 0.6293\nH -0.6293 -0.6293 0.6293\nH -0.6293 0.6293 -0.6293\nH 0.6293 -0.6293 -0.6293`
+                xyz: `5\nCH4\nC 0.0000 0.0000 0.0000\nH 0.6293 0.6293 0.6293\nH -0.6293 -0.6293 0.6293\nH -0.6293 0.6293 -0.6293\nH 0.6293 -0.6293 -0.6293`,
+                bonds: [[0,1,1],[0,2,1],[0,3,1],[0,4,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'NH3',
@@ -382,7 +387,8 @@
                 props: '具強烈刺激性氣味的無色氣體，分子呈三角錐形結構，極易溶於水且呈弱鹼性。',
                 uses: '農業化學肥料、冷氣製冷劑、家用清潔劑原料。',
                 badgeBg: 'bg-[#f3e8ff] text-[#6b21a8]',
-                xyz: `4\nNH3\nN 0.0000 0.0000 0.1165\nH 0.0000 0.9377 -0.2718\nH 0.8121 -0.4689 -0.2718\nH -0.8121 -0.4689 -0.2718`
+                xyz: `4\nNH3\nN 0.0000 0.0000 0.1165\nH 0.0000 0.9377 -0.2718\nH 0.8121 -0.4689 -0.2718\nH -0.8121 -0.4689 -0.2718`,
+                bonds: [[0,1,1],[0,2,1],[0,3,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'H2O2',
@@ -392,37 +398,41 @@
                 props: '無色微黏稠液體，強氧化劑。分子呈現非平面的特殊折角開書形幾何結構，易分解生成水與氧氣。',
                 uses: '醫用傷口消毒殺菌（雙氧水）、衣物與紙漿漂白、半導體晶圓清潔與火箭推進氧化劑。',
                 badgeBg: 'bg-[#e0f2fe] text-[#0369a1]',
-                xyz: `4\nH2O2\nO -0.7350 0.0000 -0.1000\nO 0.7350 0.0000 -0.1000\nH -1.1500 0.7800 0.4000\nH 1.1500 -0.7800 0.4000`
+                xyz: `4\nH2O2\nO -0.7375 0.0000 0.0000\nO 0.7375 0.0000 0.0000\nH -0.8170 0.5328 0.7825\nH 0.8170 0.5328 -0.7825`,
+                bonds: [[0,1,1],[0,2,1],[1,3,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'NO2',
                 formula: 'NO₂',
                 name: '二氧化氮',
                 recipe: { 'N': 1, 'O': 2 },
-                props: '紅棕色具刺激性氣味的劇毒氣體，呈彎曲形分子。溶於水生成硝酸與一氧化氮，為酸雨成分之一。',
+                props: '紅棕色具刺激性氣味的劇毒氣體，呈彎曲形分子（鍵角約 134°）。路易斯結構為 O=N–O（一個雙鍵、一個單鍵），N 上帶有一個未成對電子。溶於水生成硝酸與一氧化氮，為酸雨成分之一。',
                 uses: '製造硝酸的關鍵原料、火箭燃料的氧化劑。',
                 badgeBg: 'bg-[#ffedd5] text-[#9a3412]',
-                xyz: `3\nNO2\nN 0.0000 0.0000 0.3250\nO 0.0000 1.0600 -0.2600\nO 0.0000 -1.0600 -0.2600`
+                xyz: `3\nNO2\nN 0.0000 0.0000 0.3099\nO 0.0000 1.1031 -0.1549\nO 0.0000 -1.1031 -0.1549`,
+                bonds: [[0,1,2],[0,2,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'Na2O',
                 formula: 'Na₂O',
                 name: '氧化鈉',
                 recipe: { 'Na': 2, 'O': 1 },
-                props: '白色鹼性金屬氧化物，遇水立即劇烈反應並大量放熱生成強鹼氫氧化鈉（燒鹼）。',
+                props: '白色鹼性金屬氧化物，由 Na⁺ 與 O²⁻ 以離子鍵結合成晶體（模型以虛線表示離子間的吸引，僅示意一組 Na₂O 化學式單位）。遇水立即劇烈反應並大量放熱生成強鹼氫氧化鈉（燒鹼）。',
                 uses: '製造平板玻璃助熔劑、化學合成鹼金屬試劑與陶瓷釉料。',
                 badgeBg: 'bg-[#fed7aa] text-[#9a3412]',
-                xyz: `3\nNa2O\nO 0.0000 0.0000 0.0000\nNa 0.0000 0.0000 1.9000\nNa 0.0000 0.0000 -1.9000`
+                xyz: `3\nNa2O\nO 0.0000 0.0000 0.0000\nNa 0.0000 0.0000 1.9000\nNa 0.0000 0.0000 -1.9000`,
+                bonds: [[0,1,'ionic'],[0,2,'ionic']]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'O3',
                 formula: 'O₃',
                 name: '臭氧',
                 recipe: { 'O': 3 },
-                props: '淡藍色具刺激性氣味的氣體，呈 V 形彎曲分子，具強氧化性。平流層的臭氧層可吸收有害紫外線。',
+                props: '淡藍色具刺激性氣味的氣體，呈 V 形彎曲分子（鍵角約 117°），路易斯結構為 O=O–O（一個雙鍵、一個單鍵），具強氧化性。平流層的臭氧層可吸收有害紫外線。',
                 uses: '空氣與水質殺菌消毒、漂白劑、大氣屏障保護地球生物。',
                 badgeBg: 'bg-[#f87171] text-white',
-                xyz: `3\nO3\nO 0.0000 0.0000 0.3800\nO 0.0000 1.0900 -0.1900\nO 0.0000 -1.0900 -0.1900`
+                xyz: `3\nO3\nO 0.0000 0.0000 0.4464\nO 0.0000 1.0885 -0.2232\nO 0.0000 -1.0885 -0.2232`,
+                bonds: [[0,1,2],[0,2,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'H2O',
@@ -432,7 +442,8 @@
                 props: '生命之源，極性 V 形彎曲分子，鍵角約為 104.5 度。',
                 uses: '生物飲用維持生命、日常清潔、工業冷卻與化學反應介質。',
                 badgeBg: 'bg-[#dbeafe] text-[#1d4ed8]',
-                xyz: `3\nH2O\nO 0.0000 0.0000 0.1173\nH 0.0000 0.7572 -0.4692\nH 0.0000 -0.7572 -0.4692`
+                xyz: `3\nH2O\nO 0.0000 0.0000 0.1173\nH 0.0000 0.7572 -0.4692\nH 0.0000 -0.7572 -0.4692`,
+                bonds: [[0,1,1],[0,2,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'CO2',
@@ -442,17 +453,19 @@
                 props: '無色無味氣體，呈直線形分子（O=C=O）。不助燃，溶於水呈弱酸性。',
                 uses: '植物光合作用原料、氣泡水/汽水碳酸來源、滅火器與溫室氣體。',
                 badgeBg: 'bg-[#e5e7eb] text-[#374151]',
-                xyz: `3\nCO2\nC 0.0000 0.0000 0.0000\nO 0.0000 0.0000 1.1600\nO 0.0000 0.0000 -1.1600`
+                xyz: `3\nCO2\nC 0.0000 0.0000 0.0000\nO 0.0000 0.0000 1.1600\nO 0.0000 0.0000 -1.1600`,
+                bonds: [[0,1,2],[0,2,2]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'SO2',
                 formula: 'SO₂',
                 name: '二氧化硫',
                 recipe: { 'S': 1, 'O': 2 },
-                props: '具刺鼻臭味的無色毒性氣體，V 形分子，溶於水形成亞硫酸，為酸雨主因之一。',
+                props: '具刺鼻臭味的無色毒性氣體，V 形分子（鍵角約 119°），路易斯結構為 O=S–O（一個雙鍵、一個單鍵）。溶於水形成亞硫酸，為酸雨主因之一。',
                 uses: '工業製造硫酸、葡萄酒防腐抗氧化劑、紙漿漂白。',
                 badgeBg: 'bg-[#fef08a] text-[#713f12]',
-                xyz: `3\nSO2\nS 0.0000 0.0000 0.3600\nO 0.0000 1.2400 -0.3600\nO 0.0000 -1.2400 -0.3600`
+                xyz: `3\nSO2\nS 0.0000 0.0000 0.3600\nO 0.0000 1.2400 -0.3600\nO 0.0000 -1.2400 -0.3600`,
+                bonds: [[0,1,2],[0,2,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'H2S',
@@ -462,47 +475,52 @@
                 props: '無色、具強烈臭雞蛋氣味的劇毒氣體，V 形分子，微溶於水呈弱酸性。',
                 uses: '天然溫泉與火山氣體成分、化學沉澱分析與有機硫化合物合成。',
                 badgeBg: 'bg-[#fef3c7] text-[#854d0e]',
-                xyz: `3\nH2S\nS 0.0000 0.0000 0.1000\nH 0.0000 0.9600 -0.8000\nH 0.0000 -0.9600 -0.8000`
+                xyz: `3\nH2S\nS 0.0000 0.0000 0.6181\nH 0.0000 0.9618 -0.3091\nH 0.0000 -0.9618 -0.3091`,
+                bonds: [[0,1,1],[0,2,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'Cl2',
                 formula: 'Cl₂',
                 name: '氯氣',
                 recipe: { 'Cl': 2 },
-                props: '黃綠色具強烈刺激性與毒性的雙原子氣體，具有強氧化性。',
+                props: '黃綠色具強烈刺激性與毒性的雙原子氣體，兩個氯原子以單鍵（Cl–Cl）結合，具有強氧化性。',
                 uses: '自來水消毒、漂白劑原料、製造 PVC 與農藥。',
                 badgeBg: 'bg-[#dcfce7] text-[#166534]',
-                xyz: `2\nCl2\nCl 0.0000 0.0000 0.9900\nCl 0.0000 0.0000 -0.9900`
+                xyz: `2\nCl2\nCl 0.0000 0.0000 0.9900\nCl 0.0000 0.0000 -0.9900`,
+                bonds: [[0,1,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'NO',
                 formula: 'NO',
                 name: '一氧化氮',
                 recipe: { 'N': 1, 'O': 1 },
-                props: '無色雙原子氣體，在空氣中極易氧化成紅棕色的 NO₂。為人體重要神經傳導物質。',
+                props: '無色雙原子氣體，含奇數個電子，路易斯結構為 N=O（雙鍵），N 上有一個未成對電子。在空氣中極易氧化成紅棕色的 NO₂，為人體重要神經傳導物質。',
                 uses: '血管擴張劑（醫學用途）、硝酸生產的中間產物。',
                 badgeBg: 'bg-[#e0e7ff] text-[#3730a3]',
-                xyz: `2\nNO\nN 0.0000 0.0000 -0.5750\nO 0.0000 0.0000 0.5750`
+                xyz: `2\nNO\nN 0.0000 0.0000 -0.5750\nO 0.0000 0.0000 0.5750`,
+                bonds: [[0,1,2]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'H2',
                 formula: 'H₂',
                 name: '氫氣',
                 recipe: { 'H': 2 },
-                props: '密度最小的雙原子氣體，清潔高能燃料。',
+                props: '密度最小的雙原子氣體，兩個氫原子以單鍵（H–H）結合，清潔高能燃料。',
                 uses: '清潔能源火箭推進劑、燃料電池。',
                 badgeBg: 'bg-[#daf0f8] text-[#2c6e91]',
-                xyz: `2\nH2\nH 0.0000 0.0000 0.3700\nH 0.0000 0.0000 -0.3700`
+                xyz: `2\nH2\nH 0.0000 0.0000 0.3700\nH 0.0000 0.0000 -0.3700`,
+                bonds: [[0,1,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'O2',
                 formula: 'O₂',
                 name: '氧氣',
                 recipe: { 'O': 2 },
-                props: '生命維持必需的雙原子氣體，強助燃性。',
+                props: '生命維持必需的雙原子氣體，兩個氧原子以雙鍵（O=O）結合，強助燃性。',
                 uses: '醫療急救、潛水供氧、工業高溫焊接。',
                 badgeBg: 'bg-[#fcdede] text-[#b83b3b]',
-                xyz: `2\nO2\nO 0.0000 0.0000 0.6050\nO 0.0000 0.0000 -0.6050`
+                xyz: `2\nO2\nO 0.0000 0.0000 0.6050\nO 0.0000 0.0000 -0.6050`,
+                bonds: [[0,1,2]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'N2',
@@ -512,27 +530,30 @@
                 props: '大氣主要成分，由雙原子透過堅固的三鍵結合，性質極其穩定。',
                 uses: '食品餅乾包裝袋充氣保鮮、液氮超低溫冷凍。',
                 badgeBg: 'bg-[#e8dcf7] text-[#5d4196]',
-                xyz: `2\nN2\nN 0.0000 0.0000 0.5490\nN 0.0000 0.0000 -0.5490`
+                xyz: `2\nN2\nN 0.0000 0.0000 0.5490\nN 0.0000 0.0000 -0.5490`,
+                bonds: [[0,1,3]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'CO',
                 formula: 'CO',
                 name: '一氧化碳',
                 recipe: { 'C': 1, 'O': 1 },
-                props: '無色無味劇毒氣體，燃播不完全時產生，極易與血紅素結合。',
+                props: '無色無味劇毒氣體，碳與氧以三鍵（C≡O）結合，燃燒不完全時產生，極易與血紅素結合。',
                 uses: '工業鍊鐵冶金還原劑、化工合成氣原料。',
                 badgeBg: 'bg-[#d1d5db] text-[#1f2937]',
-                xyz: `2\nCO\nC 0.0000 0.0000 -0.5650\nO 0.0000 0.0000 0.5650`
+                xyz: `2\nCO\nC 0.0000 0.0000 -0.5650\nO 0.0000 0.0000 0.5650`,
+                bonds: [[0,1,3]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'NaCl',
                 formula: 'NaCl',
                 name: '氯化鈉 (食鹽)',
                 recipe: { 'Na': 1, 'Cl': 1 },
-                props: '白色結晶體，離子鍵結合，易溶於水。',
+                props: '白色結晶體，由 Na⁺ 與 Cl⁻ 以離子鍵結合（模型以虛線表示離子間的吸引，僅示意一組 NaCl 化學式單位，實際為立方晶格），易溶於水。',
                 uses: '日常烹調調味、醫院生理食鹽水、化工製造純鹼與氯氣原料。',
                 badgeBg: 'bg-[#fef3c7] text-[#b45309]',
-                xyz: `2\nNaCl\nNa 0.0000 0.0000 -1.1800\nCl 0.0000 0.0000 1.1800`
+                xyz: `2\nNaCl\nNa 0.0000 0.0000 -1.1800\nCl 0.0000 0.0000 1.1800`,
+                bonds: [[0,1,'ionic']]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'HCl',
@@ -542,7 +563,8 @@
                 props: '具強刺激性氣味的雙原子氣體，溶於水形成強酸（鹽酸）。',
                 uses: '人體胃液消化成分、金屬表面除銹與化工清洗。',
                 badgeBg: 'bg-[#dcfce7] text-[#15803d]',
-                xyz: `2\nHCl\nH 0.0000 0.0000 -1.0700\nCl 0.0000 0.0000 0.2000`
+                xyz: `2\nHCl\nH 0.0000 0.0000 -1.0700\nCl 0.0000 0.0000 0.2000`,
+                bonds: [[0,1,1]]  // [原子A, 原子B, 鍵級]
             },
             {
                 id: 'He_gas',
@@ -552,7 +574,8 @@
                 props: '極輕的無色無味惰性氣體（十八族），沸點接近絕對零度。最穩定的原子之一，常溫下以單原子氣體形式存在。',
                 uses: '空飄氣球與飛艇充氣（安全不燃）、超導磁體（MRI）深低溫冷卻劑。',
                 badgeBg: 'bg-[#f0f9ff] text-[#0284c7]',
-                xyz: `1\nHe\nHe 0.0000 0.0000 0.0000`
+                xyz: `1\nHe\nHe 0.0000 0.0000 0.0000`,
+                bonds: []  // [原子A, 原子B, 鍵級]
             }
         ];
 
@@ -679,14 +702,74 @@
             return cylinder;
         }
 
+        // 建立虛線鍵（共振的「半個鍵」或離子間吸引）
+        function createDashedBond(posA, posB, radius, color, segLen = 0.12, gapLen = 0.09) {
+            const group = new THREE.Group();
+            const dir = new THREE.Vector3().subVectors(posB, posA);
+            const len = dir.length();
+            const unit = dir.clone().normalize();
+            let t = 0;
+            while (t < len) {
+                const end = Math.min(t + segLen, len);
+                const a = posA.clone().addScaledVector(unit, t);
+                const b = posA.clone().addScaledVector(unit, end);
+                group.add(createCylinderBond(a, b, radius, color));
+                t = end + gapLen;
+            }
+            return group;
+        }
+
+        // 求與鍵軸垂直的偏移方向（盡量落在分子平面上，讓雙鍵/三鍵在平面內並排）
+        function bondOffsetDir(atoms, i, j) {
+            const a = atoms[i].pos, b = atoms[j].pos;
+            const axis = new THREE.Vector3().subVectors(b, a).normalize();
+            const mid = a.clone().add(b).multiplyScalar(0.5);
+            for (let k = 0; k < atoms.length; k++) {
+                if (k === i || k === j) continue;
+                const v = new THREE.Vector3().subVectors(atoms[k].pos, mid);
+                v.addScaledVector(axis, -v.dot(axis));
+                if (v.length() > 0.05) return v.normalize();
+            }
+            const ref = Math.abs(axis.x) < 0.9 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
+            return new THREE.Vector3().crossVectors(axis, ref).normalize();
+        }
+
+        // 依鍵級繪製：1 單鍵、2 雙鍵、3 三鍵、1.5 / 2.5 共振（實線＋虛線）、'ionic' 離子鍵（虛線）
+        function drawBond(atoms, i, j, order) {
+            const a = atoms[i].pos, b = atoms[j].pos;
+            const color = 0xd6d3d1;
+            if (order === 'ionic') {
+                molGroup.add(createDashedBond(a, b, 0.045, 0xa8a29e, 0.14, 0.12));
+                return;
+            }
+            const off = bondOffsetDir(atoms, i, j);
+            const shifted = (d) => [a.clone().addScaledVector(off, d), b.clone().addScaledVector(off, d)];
+            const full = Math.floor(order);
+            const hasHalf = (order - full) > 0.25;
+            const total = full + (hasHalf ? 1 : 0);
+            const r = total === 1 ? 0.09 : (total === 2 ? 0.065 : 0.05);
+            const gap = total === 2 ? 0.17 : 0.15;
+            for (let n = 0; n < total; n++) {
+                const d = (n - (total - 1) / 2) * gap;
+                const [p, q] = shifted(d);
+                if (hasHalf && n === total - 1) {
+                    molGroup.add(createDashedBond(p, q, r * 0.85, color));
+                } else {
+                    molGroup.add(createCylinderBond(p, q, r, color));
+                }
+            }
+        }
+
         // 解析 XYZ 座標並建構 3D 分子球棍模型
-        function renderMoleculeModel(xyzString) {
+        function renderMoleculeModel(xyzString, bondList) {
             if (!threeScene || !molGroup) return;
 
             while (molGroup.children.length > 0) {
                 const obj = molGroup.children[0];
-                if (obj.geometry) obj.geometry.dispose();
-                if (obj.material) obj.material.dispose();
+                obj.traverse(o => {
+                    if (o.geometry) o.geometry.dispose();
+                    if (o.material) o.material.dispose();
+                });
                 molGroup.remove(obj);
             }
 
@@ -750,20 +833,22 @@
                 molGroup.add(sphere);
             });
 
-            // 依鍵長閥值繪製化學鍵棒狀結構
-            for (let i = 0; i < atoms.length; i++) {
-                for (let j = i + 1; j < atoms.length; j++) {
-                    const a1 = atoms[i];
-                    const a2 = atoms[j];
-                    if (a1.elem === 'He' || a2.elem === 'He') continue;
-
-                    const dist = a1.pos.distanceTo(a2.pos);
-                    const maxBond = (a1.elem === 'H' || a2.elem === 'H') ? 1.35 : 
-                        ((a1.elem === 'Na' || a2.elem === 'Na' || a1.elem === 'Cl' || a2.elem === 'Cl' || a1.elem === 'S' || a2.elem === 'S') ? 2.65 : 1.75);
-
-                    if (dist > 0.1 && dist <= maxBond) {
-                        const bondMesh = createCylinderBond(a1.pos, a2.pos, 0.09, 0xd6d3d1);
-                        molGroup.add(bondMesh);
+            // 繪製化學鍵：優先使用分子資料中明確標註的鍵級（單鍵/雙鍵/三鍵/共振/離子鍵）
+            if (Array.isArray(bondList)) {
+                bondList.forEach(([i, j, order]) => {
+                    if (atoms[i] && atoms[j]) drawBond(atoms, i, j, order);
+                });
+            } else {
+                // 備援：未提供鍵資料時，依鍵長閥值繪製單鍵
+                for (let i = 0; i < atoms.length; i++) {
+                    for (let j = i + 1; j < atoms.length; j++) {
+                        const a1 = atoms[i];
+                        const a2 = atoms[j];
+                        if (a1.elem === 'He' || a2.elem === 'He') continue;
+                        const dist = a1.pos.distanceTo(a2.pos);
+                        const maxBond = (a1.elem === 'H' || a2.elem === 'H') ? 1.35 : 
+                            ((a1.elem === 'Na' || a2.elem === 'Na' || a1.elem === 'Cl' || a2.elem === 'Cl' || a1.elem === 'S' || a2.elem === 'S') ? 2.65 : 1.75);
+                        if (dist > 0.1 && dist <= maxBond) drawBond(atoms, i, j, 1);
                     }
                 }
             }
@@ -827,7 +912,7 @@
             }
         }
 
-        function displayThreeMolecule(xyzData) {
+        function displayThreeMolecule(xyzData, bondList) {
             const container = document.getElementById('molecule-viewer');
             if (!container) return;
 
@@ -848,7 +933,7 @@
                 }
 
                 if (xyzData) {
-                    renderMoleculeModel(xyzData);
+                    renderMoleculeModel(xyzData, bondList);
                 }
             }, 60);
         }
@@ -1363,7 +1448,7 @@
 
                 // 透過原生 Three.js 渲染 3D 模型
                 if (targetItem && targetItem.xyz) {
-                    displayThreeMolecule(targetItem.xyz);
+                    displayThreeMolecule(targetItem.xyz, targetItem.bonds);
                 }
             }
         }
